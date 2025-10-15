@@ -1,5 +1,6 @@
 Flask
 PyJWT
+requests
 python-dotenv
 Werkzeug
 pandas
