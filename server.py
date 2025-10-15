@@ -7,6 +7,8 @@ import io
 import sqlite3
 import json
 import requests
+import psycopg2
+from psycopg2.extras import DictCursor
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -88,11 +90,20 @@ template_env.globals['timedelta'] = timedelta
 # ----------------------
 # DATABASE
 # ----------------------
+
+
 def get_db():
     db = getattr(g, "_database", None)
     if db is None:
-        db = g._database = sqlite3.connect(DB_FILE)
-        db.row_factory = sqlite3.Row
+        db_url = os.environ.get('DATABASE_URL')
+        if not db_url:
+            # LOCAL DEVELOPMENT: Fallback to SQLite when DATABASE_URL is not set
+            db = g._database = sqlite3.connect(DB_FILE)
+            db.row_factory = sqlite3.Row
+        else:
+            # PRODUCTION: Connect to PostgreSQL on Render
+            conn = psycopg2.connect(db_url)
+            db = g._database = conn
     return db
 
 @app.teardown_appcontext
