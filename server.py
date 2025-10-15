@@ -650,15 +650,15 @@ def get_user_quote_pdf(current_user, quote_id):
 def generate_email(current_user):
     data = request.json; customer = data.get("customerName", "Customer"); project = data.get("projectName", "your project"); totals = data.get("totals", {}); tone = data.get("tone", "professional")
     total_val = totals.get("total", 0)
-    if OPENAI_AVAILABLE and os.getenv("OPENAI_API_KEY"):
-        try:
-            client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-            resp = client.chat.completions.create(model="gpt-3.5-turbo", messages=[
-                {"role": "system", "content": "You are an assistant writing concise, professional sales emails for quotes."},
-                {"role": "user", "content": f"Customer: {customer}, Project: {project}, Total: {total_val:,.2f}, Tone: {tone}. Write the email body."}
-            ])
-            return jsonify({"emailBody": resp.choices[0].message.content.strip()})
-        except Exception as e: print(f"OpenAI failed: {e}")
+    # if OPENAI_AVAILABLE and os.getenv("OPENAI_API_KEY"):
+    #     try:
+    #         client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    #         resp = client.chat.completions.create(model="gpt-3.5-turbo", messages=[
+    #             {"role": "system", "content": "You are an assistant writing concise, professional sales emails for quotes."},
+    #             {"role": "user", "content": f"Customer: {customer}, Project: {project}, Total: {total_val:,.2f}, Tone: {tone}. Write the email body."}
+    #         ])
+    #         return jsonify({"emailBody": resp.choices[0].message.content.strip()})
+    #     except Exception as e: print(f"OpenAI failed: {e}")
     body = f"Dear {customer},\n\nPlease find attached the quotation for \"{project}\". The total is ${total_val:,.2f}.\n\nSincerely,\n{COMPANY_NAME}"
     return jsonify({"emailBody": body})
 
