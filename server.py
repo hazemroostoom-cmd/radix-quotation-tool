@@ -7,8 +7,7 @@ import io
 import sqlite3
 import json
 import requests
-import psycopg2
-from psycopg2.extras import DictCursor
+import MySQLdb
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -92,18 +91,26 @@ template_env.globals['timedelta'] = timedelta
 # ----------------------
 
 
+
+
+
 def get_db():
     db = getattr(g, "_database", None)
     if db is None:
-        db_url = os.environ.get('DATABASE_URL')
-        if not db_url:
-            # LOCAL DEVELOPMENT: Fallback to SQLite when DATABASE_URL is not set
+        # Check if running on PythonAnywhere by looking for an environment variable
+        if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+            # PRODUCTION: Connect to MySQL on PythonAnywhere
+            db = g._database = MySQLdb.connect(
+                host=os.environ.get('DB_HOST'),
+                user=os.environ.get('DB_USER'),
+                passwd=os.environ.get('DB_PASSWORD'),
+                db=os.environ.get('DB_NAME'),
+                cursorclass=MySQLdb.cursors.DictCursor # This makes it behave like the old db
+            )
+        else:
+            # LOCAL DEVELOPMENT: Fallback to SQLite
             db = g._database = sqlite3.connect(DB_FILE)
             db.row_factory = sqlite3.Row
-        else:
-            # PRODUCTION: Connect to PostgreSQL on Render
-            conn = psycopg2.connect(db_url)
-            db = g._database = conn
     return db
 
 @app.teardown_appcontext
