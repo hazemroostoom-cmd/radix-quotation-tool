@@ -13,4 +13,4 @@ rembg
 pdfkit
 weasyprint
 gunicorn
-psycopg2-binary
+mysqlclient
