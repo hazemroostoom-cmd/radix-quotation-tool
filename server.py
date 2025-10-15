@@ -27,17 +27,17 @@ from PIL import Image, ImageFile
 import pandas as pd
 
 # --- Optional Integrations ---
-try:
-    import openai
-    OPENAI_AVAILABLE = True
-except Exception:
-    OPENAI_AVAILABLE = False
+# try:
+#     import openai
+#     OPENAI_AVAILABLE = True
+# except Exception:
+#     OPENAI_AVAILABLE = False
 
-try:
-    from rembg import remove as rembg_remove
-    REMBG_AVAILABLE = True
-except Exception:
-    REMBG_AVAILABLE = False
+# try:
+#     from rembg import remove as rembg_remove
+#     REMBG_AVAILABLE = True
+# except Exception:
+#     REMBG_AVAILABLE = False
 
 try:
     import pdfkit
