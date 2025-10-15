@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Application & Contract: {{ customer_info.project }}</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; margin: 50px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 18pt; }
+        h2 { font-size: 14pt; margin-top: 30px; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        p { line-height: 1.5; }
+        .meta-info { margin-bottom: 30px; }
+        .signature-section { margin-top: 80px; display: table; width: 100%; }
+        .signature-box { display: table-cell; width: 50%; }
+        .signature-line { border-bottom: 1px solid #000; margin-top: 60px; margin-right: 20px; }
+        .footer { margin-top: 50px; text-align: center; font-size: 10pt; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Smart Home System Application & Contract</h1>
+    </div>
+
+    <div class="meta-info">
+        <p><strong>Date:</strong> {{ now.strftime("%B %d, %Y") }}</p>
+        <p><strong>Client Name:</strong> {{ customer_info.name or '____________________' }}</p>
+        <p><strong>Project Location:</strong> {{ customer_info.project or '____________________' }}</p>
+        <p><strong>Quotation Reference:</strong> {{ ref_numbers.quotation_number }}</p>
+        <p><strong>BOM Reference:</strong> {{ ref_numbers.bom_reference }}</p>
+        <p><strong>Total Contract Value:</strong> ${{ "%.2f"|format(totals.total) }} (USD)</p>
+    </div>
+
+    <h2>1. Agreement</h2>
+    <p>This contract is made between <strong>{{ company_name }}</strong> ("the Company") and the client named above ("the Client") for the installation of a smart home system as detailed in the quotation referenced above. The Client agrees to the total contract value and the terms and conditions outlined herein.</p>
+
+    <h2>2. Terms & Conditions</h2>
+    <p>All terms and conditions from Quotation {{ ref_numbers.quotation_number }}, including payment schedules (50% down payment, 30% upon delivery, 20% after installation completion), delivery timelines, and warranty periods (24 months from installation date), are incorporated into this contract by reference.</p>
+    
+    <h2>3. Scope of Work</h2>
+    <p>The Company agrees to supply and install the products listed in the Bill of Materials (BOM) referenced above at the specified project location. The total contract value is inclusive of all listed products, labor, and applicable taxes (VAT at 14%). Any work outside this scope will require a separate agreement.</p>
+    <p>This agreement is effective as of the date of the Client's signature.</p>
+
+    <div class="signature-section">
+        <div class="signature-box">
+            <p><strong>For {{ company_name }}:</strong></p>
+            <div class="signature-line"></div>
+            <p>Authorized Representative</p>
+        </div>
+        <div class="signature-box">
+            <p><strong>For the Client:</strong></p>
+            <div class="signature-line"></div>
+            <p>Client Signature</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        This is a legally binding agreement.
+        <br>
+        {{ company_name }} | {{ company_info_line_1 }}
+    </div>
+</body>
+</html>

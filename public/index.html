@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Home Quotation Tool</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="title-container">
+      <img src="Radix-Logo.png" alt="Company Logo">
+      <h1>Smart Home Quotation Tool</h1>
+    </div>
+  
+    <div class="header-actions">
+      <a href="dashboard.html" class="btn-primary" id="dashboard-btn">📈 Dashboard</a>
+      <button id="import-prices-ui-btn" class="btn-secondary">Import Prices</button>
+      <button id="bulk-link-images-btn" class="btn-secondary">Link Images</button>
+      <input type="file" id="prices-file-input" accept=".xlsx,.xls" style="display:none;">
+      <button id="admin-panel-btn" class="btn-secondary">⚙️ Admin Panel</button> 
+      <button id="clear-catalog-btn" class="btn-secondary">Clear Catalog</button>
+      <span id="user-name" style="align-self: center; font-weight: 500; margin: 0 10px;"></span>
+      <button id="logout-btn" class="btn-secondary">Logout</button>
+      <button id="toggle-dark-mode" class="btn-secondary">🌙</button>
+      <button id="toggle-catalog-btn" class="btn-secondary">
+        <i class="fas fa-eye-slash"></i> <span>Hide Catalog</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="panel catalog-panel">
+      <div class="panel-header">
+        <h2>Product Catalog</h2>
+      </div>
+      <div class="catalog-controls">
+        <input type="text" id="search-products" placeholder="🔍 Search products...">
+        <select id="filter-category">
+          <option value="">All Categories</option>
+        </select>
+        <select id="sort-products">
+          <option value="name_asc">Name (A-Z)</option>
+          <option value="name_desc">Name (Z-A)</option>
+          <option value="price_asc">Price (Low-High)</option>
+          <option value="price_desc">Price (High-Low)</option>
+        </select>
+      </div>
+      <div id="product-list-container">
+        <div id="skeleton-loader" class="skeleton-container">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+      </div>
+      <div class="panel-header">
+          <h2>Packages</h2>
+      </div>
+      <div class="packages-controls">
+          <select id="packages-dropdown"></select>
+          <button id="add-package-btn" class="btn-secondary">Add Package</button>
+      </div>
+
+      <div id="user-quotes-widget" class="panel dashboard-widget">
+          <div class="widget-header">
+              <h3><i class="fas fa-folder"></i> My Saved Quotations</h3>
+              <button id="toggle-user-quotes-btn" class="widget-toggle-btn" title="Collapse / Expand">
+                  <i class="fas fa-chevron-up"></i>
+              </button>
+          </div>
+          <div class="collapsible-content">
+              <div class="table-container">
+                  <table class="low-stock-table">
+                      <thead>
+                          <tr>
+                              <th>Project</th>
+                              <th>Customer</th>
+                              <th>Date Saved</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody id="user-quotes-table-body">
+                          <tr><td colspan="4">Loading your quotations...</td></tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+    </section>
+
+    <section class="panel quote-panel">
+      <div class="panel-header">
+        <h2>Current Quotation</h2>
+        <button id="clear-quote-btn" class="btn-secondary">Clear All</button>
+      </div>
+      <div class="customer-details">
+        <input type="text" id="project-name" placeholder="Project Name">
+        <input type="text" id="customer-name" placeholder="Customer Name">
+      </div>
+      <div class="quote-table-container">
+        <table id="quotation-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Unit Price</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <div id="empty-quote">
+            <p>Your quote is empty.</p>
+            <p>Click on products or drag them here to add.</p>
+        </div>
+      </div>
+      <div class="quote-summary">
+        <div class="summary-row"><span>Subtotal</span><span id="subtotal-val">$0.00</span></div>
+        <div class="summary-row">
+            <span>Installation</span>
+            <input type="number" id="installation-cost" value="0" min="0">
+        </div>
+        <div class="summary-row">
+            <span>Discount (%)</span>
+            <input type="number" id="discount-input" value="0" min="0" max="100">
+        </div>
+        <div class="summary-row"><span>VAT (14%)</span><span id="vat-val">$0.00</span></div>
+        <div class="summary-row total"><strong>Total</strong><strong id="total-val">$0.00</strong></div>
+      </div>
+      <div class="quote-actions">
+        <button id="save-quote-btn" class="btn-secondary">💾 Save</button>
+        <button id="load-quote-btn" class="btn-secondary">📂 Load</button>
+        <button id="export-pdf-btn" class="btn-primary">⬇ Export PDF</button>
+        <button id="send-email-btn" class="btn-primary">📧 Send Email</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="email-modal" class="modal-overlay">
+    <div class="modal">
+      <h3>Send Quotation</h3>
+      <input type="email" id="email-recipient" placeholder="Recipient Email"/>
+      <textarea id="email-body" rows="8" placeholder="The email message will be generated here..."></textarea>
+      <div class="modal-actions">
+        <select id="email-tone">
+          <option value="professional">Professional</option>
+          <option value="casual">Casual</option>
+          <option value="persuasive">Persuasive</option>
+        </select>
+        <button id="generate-ai-btn" class="btn-secondary">✨ Generate with AI</button>
+        <div style="flex:1"></div>
+        <button id="email-modal-cancel" class="btn-secondary">Cancel</button>
+        <button id="email-send-confirm" class="btn-primary">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="load-quote-modal" class="modal-overlay">
+    <div class="modal">
+      <h3>Load Saved Quote</h3>
+      <ul id="saved-quotes-list">
+        <li>Loading...</li>
+      </ul>
+      <div class="modal-actions">
+          <button id="load-modal-cancel" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="image-upload-modal" class="modal-overlay">
+    <div class="modal">
+      <h3>Upload Product Image</h3>
+      <div id="image-upload-container">
+        <input type="file" id="image-file-input" accept="image/*" style="display:none;">
+        <button id="select-image-btn" class="btn-secondary">Select Image</button>
+        <div id="image-preview-container">
+          <img id="image-preview" src="" alt="Preview" style="max-width: 100%; max-height: 200px; display: none;">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="image-modal-cancel" class="btn-secondary">Cancel</button>
+        <button id="image-upload-confirm" class="btn-primary">Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-modal" class="modal-overlay">
+    <div class="modal modal-lg">
+      <h3>Product Inventory Management</h3>
+      
+      <form id="admin-product-form" class="admin-form">
+        <input type="hidden" id="admin-form-mode" value="add">
+        <input type="text" id="admin-model" placeholder="Model/SKU (Unique)" required>
+        <input type="text" id="admin-description" placeholder="Product Description" required>
+        <input type="text" id="admin-category" placeholder="Category" required>
+        <input type="number" id="admin-price" placeholder="Price" step="0.01" min="0" required>
+        <input type="number" id="admin-stock" placeholder="Stock Quantity" step="1" min="0" required>
+        <select id="admin-status" required>
+            <option value="Active">Active</option>
+            <option value="Inquiry Only">Inquiry Only</option>
+            <option value="Discontinued">Discontinued</option>
+        </select>
+        <div class="modal-actions">
+            <button type="button" id="admin-form-clear-btn" class="btn-secondary">Clear Form</button>
+            <button type="submit" class="btn-primary">Save Product</button>
+        </div>
+      </form>
+      
+      <hr class="admin-divider">
+
+      <div class="admin-product-list-container">
+        <table id="admin-product-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Model</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            </tbody>
+        </table>
+      </div>
+
+      <div class="modal-actions">
+        <button id="admin-modal-cancel" class="btn-secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="js/script.js"></script>
+
+</body>
+</html>

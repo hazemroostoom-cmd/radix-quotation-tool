@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Application Form - {{ customer_info.project or 'Project' }}</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #fff;
+      margin: 20px;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #0d2a4f;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+    }
+    .company-logo {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      color: #0d2a4f;
+      margin: 0;
+      font-size: 20px;
+    }
+    h2 {
+      color: #0d2a4f;
+      margin-top: 30px;
+      font-size: 16px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .meta-table, .quote-table, .totals-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .meta-table td {
+      padding: 5px;
+      border: 1px solid #ccc;
+      font-size: 11px;
+    }
+    .quote-table th, .quote-table td {
+      border: 1px solid #ccc;
+      padding: 6px;
+    }
+    .quote-table th {
+      background: #0d2a4f;
+      color: #fff;
+      font-weight: bold;
+    }
+    .totals-table td {
+      padding: 6px;
+      border: 1px solid #ccc;
+    }
+    .totals-table tr td:first-child {
+      font-weight: bold;
+      text-align: right;
+      width: 80%;
+    }
+    .grand-total td {
+      background: #0d2a4f;
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .terms, .acceptance {
+      font-size: 11px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .signature {
+      margin-top: 40px;
+      display: table;
+      width: 100%;
+    }
+    .signature div {
+      display: table-cell;
+      width: 50%;
+      vertical-align: top;
+      padding: 10px;
+    }
+    .signature-line {
+      border-top: 1px solid #000;
+      margin-top: 50px;
+    }
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 10px;
+      color: #666;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="{{ base_dir }}/Radix-Logo.png" alt="{{ company_name }} Logo" class="company-logo">
+    <h1>CLIENT APPLICATION FORM & AGREEMENT</h1>
+    <p>AGREEMENT No: {{ contract_ref }} | Based on Quotation: {{ quotation_ref }}</p>
+  </div>
+
+  <h2>Client & Project Details</h2>
+  <table class="meta-table">
+    <tr>
+        <td><strong>Client Name:</strong></td>
+        <td>{{ customer_info.name or 'N/A' }}</td>
+        <td><strong>Agreement Date:</strong></td>
+        <td>{{ now.strftime("%B %d, %Y") }}</td>
+    </tr>
+    <tr>
+        <td><strong>Project Name / Location:</strong></td>
+        <td colspan="3">{{ customer_info.project or 'N/A' }}</td>
+    </tr>
+  </table>
+
+  <h2>Scope of Work & Costs</h2>
+  <p>The following items and services will be provided as per the referenced quotation:</p>
+  <table class="quote-table">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Model</th>
+        <th>Product Description</th>
+        <th>Qty</th>
+        <th>Unit Price</th>
+        <th>Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in quote_data %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ item.model }}</td>
+        <td>{{ item.description }}</td>
+        <td align="center">{{ item.quantity }}</td>
+        <td align="right">${{ "%.2f"|format(item.price) }}</td>
+        <td align="right">${{ "%.2f"|format(item.quantity * item.price) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <table class="totals-table">
+    <tr>
+      <td>Products Subtotal</td>
+      <td align="right">${{ "%.2f"|format(totals.subtotal) }}</td>
+    </tr>
+    {% if totals.discountAmount and totals.discountAmount > 0 %}
+    <tr>
+      <td>Discount Applied ({{ "%.0f"|format(totals.discountPercent) }}%)</td>
+      <td align="right">-${{ "%.2f"|format(totals.discountAmount) }}</td>
+    </tr>
+    <tr>
+      <td>Subtotal After Discount</td>
+      <td align="right">${{ "%.2f"|format(totals.subtotal-totals.discountAmount) }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>Installation Fees</td>
+      <td align="right">${{ "%.2f"|format(totals.installation) }}</td>
+    </tr>
+    <tr>
+      <td>VAT ({{ "%.0f"|format(vat_rate) }}%)</td>
+      <td align="right">${{ "%.2f"|format(totals.vat) }}</td>
+    </tr>
+    <tr class="grand-total">
+      <td>TOTAL AGREEMENT VALUE</td>
+      <td align="right">${{ "%.2f"|format(totals.total) }}</td>
+    </tr>
+  </table>
+
+  <div class="terms">
+    <h3>Terms & Conditions</h3>
+    <ul>
+      <li>This agreement is valid upon signature by both parties and receipt of the initial down payment.</li>
+      <li>All prices are quoted in US Dollars (USD) and are final.</li>
+      <li>**Payment Terms:** 50% down payment upon signing, 30% upon delivery of materials to the site, 20% upon final installation and commissioning.</li>
+      <li>**Delivery Schedule:** In-stock items will be delivered within 10 business days. Out-of-stock or special order items may take up to 15 weeks. The client will be notified of any delays.</li>
+      <li>**Warranty:** All hardware is covered by a 24-month manufacturer's warranty from the date of final installation.</li>
+      <li>This agreement is based on Quotation Ref: <strong>{{ quotation_ref }}</strong>. Any changes to the scope of work must be agreed upon in writing via a formal change order.</li>
+    </ul>
+  </div>
+
+  <div class="acceptance">
+    <h3>Client Acceptance</h3>
+    <p>I, the undersigned, confirm that I have read, understood, and agree to the terms, conditions, and costs outlined in this application form and the referenced quotation. I authorize Radix Tech to proceed with the procurement and installation of the specified smart home system.</p>
+  </div>
+
+  <div class="signature">
+    <div>
+      <h4>For {{ company_name }}</h4>
+      <div class="signature-line"></div>
+      <p>Authorized Representative</p>
+    </div>
+    <div>
+      <h4>For Client</h4>
+      <div class="signature-line"></div>
+      <p>Name: ___________________________</p>
+      <p>Date: ___________________________</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    © {{ now.strftime("%Y") }} {{ company_name }} | {{ company_info_line_1 }} | {{ company_info_line_2 }}
+  </div>
+</body>
+</html>

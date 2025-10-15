@@ -1,0 +1,14 @@
+Flask
+PyJWT
+python-dotenv
+Werkzeug
+pandas
+openpyxl
+pypdf
+Jinja2
+Pillow
+requests
+openai
+rembg
+pdfkit
+weasyprint

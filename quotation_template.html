@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quotation for {{ customer_info.project or 'Project' }}</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #fff;
+      margin: 20px;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #0d2a4f;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+    }
+    .company-logo {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      color: #0d2a4f;
+      margin: 0;
+      font-size: 20px;
+    }
+    .meta-table, .quote-table, .totals-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .meta-table td {
+      padding: 5px;
+      border: 1px solid #ccc;
+      font-size: 11px;
+    }
+    .quote-table th, .quote-table td {
+      border: 1px solid #ccc;
+      padding: 6px;
+    }
+    .quote-table th {
+      background: #0d2a4f;
+      color: #fff;
+      font-weight: bold;
+    }
+    .totals-table td {
+      padding: 6px;
+      border: 1px solid #ccc;
+    }
+    .totals-table tr td:first-child {
+      font-weight: bold;
+      text-align: center;
+    }
+    .sub-total-discount td {
+      background: #0d2a4f;
+      color: #fff;
+      font-weight: bold;
+    }
+    .grand-total td {
+      background: #0d2a4f;
+      color: #fff;
+      font-weight: bold;
+    }
+    .terms {
+      font-size: 11px;
+      margin-top: 20px;
+    }
+    .signature {
+      margin-top: 40px;
+      display: table;
+      width: 100%;
+    }
+    .signature div {
+      display: table-cell;
+      width: 25%;
+      vertical-align: top;
+      padding: 10px;
+    }
+    .signature-line {
+      border-top: 1px solid #000;
+      margin-top: 30px;
+    }
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 10px;
+      color: #666;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="{{ base_dir }}/Radix-Logo.png" alt="{{ company_name }} Logo" class="company-logo">
+    <h1>QUOTATION FORM</h1>
+    <p>REF: {{ quotation_ref }}</p>
+  </div>
+
+  <table class="meta-table">
+    <tr>
+      <td><strong>Quotation No.</strong><br>{{ quotation_ref }}</td>
+      <td><strong>Date</strong><br>{{ now.strftime("%B %d, %Y") }}</td>
+      <td><strong>BOM Reference</strong><br>{{ bom_reference }}</td>
+      <td><strong>Valid Until</strong><br>{{ valid_until.strftime("%B %d, %Y") }}</td>
+    </tr>
+    <tr>
+        <td><strong>Customer Name:</strong></td>
+        <td>{{ customer_info.name or 'N/A' }}</td>
+        <td><strong>Location:</strong></td>
+        <td>{{ customer_info.project or 'N/A' }}</td>
+    </tr>
+  </table>
+
+  <table class="quote-table">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Model</th>
+        <th>Brand</th>
+        <th>Product Name</th>
+        <th>Qty</th>
+        <th>Unit Price</th>
+        <th>Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in quote_data %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ item.model }}</td>
+        <td>{{ item.brand or 'ORVIBO' }}</td>
+        <td>{{ item.description }}</td>
+        <td align="center">{{ item.quantity }}</td>
+        <td align="right">${{ "%.2f"|format(item.price) }}</td>
+        <td align="right">${{ "%.2f"|format(item.quantity * item.price) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <table class="totals-table">
+    <tr>
+      <td>Subtotal</td>
+      <td align="right">${{ "%.2f"|format(totals.subtotal) }}</td>
+    </tr>
+    {% if totals.discountAmount and totals.discountAmount > 0 %}
+    <tr>
+      <td>Discount ({{ "%.0f"|format(totals.discountPercent) }}%)</td>
+      <td align="right">-${{ "%.2f"|format(totals.discountAmount) }}</td>
+    </tr>
+    <tr class="sub-total-discount">
+      <td>Subtotal After Discount </td>
+      <td align="right">${{ "%.2f"|format(totals.subtotal-totals.discountAmount) }}</td>
+    </tr>
+    {% endif %}
+    
+    <tr>
+      <td>Installation Fees</td>
+      <td align="right">${{ "%.2f"|format(totals.installation) }}</td>
+    </tr>
+    <tr>
+      <td>VAT ({{ "%.0f"|format(vat_rate) }}%)</td>
+      <td align="right">${{ "%.2f"|format(totals.vat) }}</td>
+    </tr>
+    <tr class="grand-total">
+      <td>Grand Total</td>
+      <td align="right">${{ "%.2f"|format(totals.total) }}</td>
+    </tr>
+  </table>
+
+  <div class="terms">
+    <h3>Terms & Conditions</h3>
+    <ul>
+      <li>All prices are in US Dollars (USD).</li>
+      <li>Payment terms: 50% down payment, 30% upon delivery, 20% after installation completion.</li>
+      <li>Delivery: 10 days in-stock, 15 weeks out-of-stock.</li>
+      <li>Warranty: 24 months from installation date.</li>
+      <li>Quotation valid for 5 days.</li>
+    </ul>
+  </div>
+
+  <div class="signature">
+    <div>
+      <h4>Sales Representative</h4>
+      <div class="signature-line"></div>
+    </div>
+    <div>
+      <h4>Sales Admin</h4>
+      <div class="signature-line"></div>
+    </div>
+    <div>
+      <h4>Finance Departement</h4>
+      <div class="signature-line"></div>
+    </div>
+    <div>
+      <h4>Customer Signature</h4>
+      <div class="signature-line"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © {{ now.strftime("%Y") }} {{ company_name }} | Sheraton - Nozha, Cairo, Egypt | info@radixtechgroup.com
+  </div>
+</body>
+</html>
