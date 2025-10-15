@@ -9,7 +9,6 @@ pypdf
 Jinja2
 Pillow
 requests
-openai
 rembg
 pdfkit
 weasyprint
